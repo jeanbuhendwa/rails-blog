@@ -1,0 +1,82 @@
+<div class='posts-container'>
+      <div class='user-image-name-info'>
+         <div class='image-container'>
+         <img class='user-photo'src=<%= @author.photo%> alt='profile pic'/>
+         </div>
+         <div class='user'>
+         <h2 class='user-name'><%= @author.name%></h2>
+             <p class='number-of-posts'>Number of posts: <%= @author.posts_counter%></p>
+         </div>
+      </div>
+      <% @posts.each do |post|%>
+        <div class='posts'>
+           <div class='post'>
+           <h3>Post <%= post.id%></h3>
+              <p><%= post.text%></p>
+              <span class='comments-likes-info'>Comments:<%= post.comments_counter%>, Likes:<%= post.likes_counter%></span>
+             </div>
+             <div class='comments'>
+             <% post.recent_comments.each do |comment| %> 
+                <p><%= comment.author.name%>: <%= comment.text %></p>
+          <% end %>
+        </div>
+        </div>
+    <% end %>
+    <button class='pagination-btn'>Pagination</button>
+</div>
+<style>
+.posts-container {
+    display: flex;
+    flex-direction: column; 
+    padding: 2%;
+    gap:10px
+ }
+ .user-image-name-info {
+     display:flex;
+     gap:2%;
+     align-items: center;
+     padding: 1% 0
+ }
+ .image-container {
+    width:200px;
+     height:200px;
+     border: 1px solid black
+   }
+ .user-photo {
+     width:100%;
+ }
+ .user {
+    width: 100%;
+     border: 1px solid black;
+     display: flex;
+     flex-direction: column;
+     justify-content: center;
+     padding: 2% 1%;
+ }
+ .user-name {
+     padding:0;
+     margin:0;
+     font-size: 2.5rem;
+ }
+ .number-of-posts {
+     text-align: end;
+     font-size: 1.3rem;
+     padding:0;
+     margin:0;
+ }
+ .post, .comments {
+     border: 1px solid black;
+     padding: 1%
+}
+.post {
+    display: flex;
+    flex-direction: column;
+}
+.comments-likes-info {
+    align-self: end;
+}
+.pagination-btn {
+    align-self: center;
+    font-size: 1.2rem
+}
+</style >

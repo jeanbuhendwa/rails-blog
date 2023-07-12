@@ -1,8 +1,18 @@
-# SQLite. Versions 3.8.0 and up are supported.
-#   gem install sqlite3
+# PostgreSQL. Versions 9.3 and up are supported.
 #
-#   Ensure the SQLite 3 gem is defined in your Gemfile
-#   gem "sqlite3"
+# Install the pg driver:
+#   gem install pg
+# On macOS with Homebrew:
+#   gem install pg -- --with-pg-config=/usr/local/bin/pg_config
+# On macOS with MacPorts:
+#   gem install pg -- --with-pg-config=/opt/local/lib/postgresql84/bin/pg_config
+# On Windows:
+#   gem install pg
+#       Choose the win32 build.
+#       Install PostgreSQL and put its /bin directory on your path.
+#
+# Configure Using Gemfile
+# gem "pg"
 #
 default: &default
   adapter: postgresql
@@ -16,14 +26,14 @@ default: &default
 
 development:
   <<: *default
-  database: blog_app
+  database: Blog_App_development
 
 test:
   <<: *default
-  database: blog_app_test
+  database: Blog_App_test
 
 production:
   <<: *default
-  database: blog_app_production
-  username: postgres
-  password: <%= ENV["DB_PASSWORD"] %>
+  database: Blog_App_production
+  username: Blog_App
+  password: <%= ENV["BLOG_APP_DATABASE_PASSWORD"] %>

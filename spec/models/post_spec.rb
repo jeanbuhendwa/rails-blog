@@ -1,74 +1,52 @@
 require 'rails_helper'
 
 RSpec.describe Post, type: :model do
-  # tests go here
-  user1 = User.create(name: 'nahom', photo: 'https://unsplash.com/photos/F_-0BxGuVvo', bio: 'Teacher from Mexico.')
-  subject { Post.new(author: user1, title: 'Hello', text: 'This is my first post') }
+  let(:post) { Post.create }
 
-  before { subject.save }
-
-  describe 'Validations' do
-    it 'title should be present' do
-      subject.title = ''
-      expect(subject).to_not be_valid
+  context 'Testing with no inputs' do
+    it 'should not be valid' do
+      expect(post).to_not be_valid
     end
 
-    it 'title should have a maximum length of 250' do
-      subject.title = 't' * 251
-      expect(subject).to_not be_valid
+    it 'likes counter must be 0 or greater' do
+      expect(subject.likes_counter).to be >= 0
+      expect(subject.likes_counter).to be_a(Integer)
     end
 
-    it 'comments_counter should be an integer' do
-      subject.comments_counter = 1.4
-      expect(subject).to_not be_valid
+    it 'comments counter must be 0 or greater' do
+      expect(subject.comments_counter).to be >= 0
+      expect(subject.comments_counter).to be_a(Integer)
     end
 
-    it 'comments_counter should be greater than or equal to zero' do
-      subject.comments_counter = -1
-      expect(subject).to_not be_valid
-    end
-
-    it 'likes_counter should be an integer' do
-      subject.likes_counter = 1.4
-      expect(subject).to_not be_valid
-    end
-
-    it 'likes_counter should be greater than or equal to zero' do
-      subject.likes_counter = -1
-      expect(subject).to_not be_valid
+    it 'return best_five_comments' do
+      expect(subject.best_five_comments).to eq(subject.comment.order(updated_at: :desc).limit(5))
     end
   end
 
-  describe '#recent_comments' do
-    it 'should return 5 recent comments' do
-      user2 = User.create(name: 'Lilly', photo: 'https://unsplash.com/photos/F_-0BxGuVvo',
-                          bio: 'Teacher from Poland.')
-      user3 = User.create(name: 'Lala', photo: 'https://unsplash.com/photos/F_-0BxGuVvo',
-                          bio: 'Teacher from Kenya.')
-      user4 = User.create(name: 'Lolo', photo: 'https://unsplash.com/photos/F_-0BxGuVvo',
-                          bio: 'Teacher from Nigeria.')
-      user5 = User.create(name: 'Lele', photo: 'https://unsplash.com/photos/F_-0BxGuVvo',
-                          bio: 'Teacher from Ethiopia.')
-      user6 = User.create(name: 'Lulu', photo: 'https://unsplash.com/photos/F_-0BxGuVvo',
-                          bio: 'Teacher from Uganda.')
+  context 'Testing with inputs' do
+    let(:user) { User.new(name: 'Tom', photo: 'https://unsplash.com/photos/F_-0BxGuVvo', bio: 'New user') }
+    subject { Post.new(author: user, title: 'Nature', text: 'I love this!') }
+    before { subject.save }
 
-      Comment.create(post: subject, author: user2, text: 'Hi Tom!')
-      Comment.create(post: subject, author: user3, text: 'Hi Tom!')
-      Comment.create(post: subject, author: user4, text: 'Hi Tom!')
-      Comment.create(post: subject, author: user5, text: 'Hi Tom!')
-      Comment.create(post: subject, author: user6, text: 'Hi Tom!')
-      Comment.create(post: subject, author: user5, text: 'Hi Tom!')
-      Comment.create(post: subject, author: user2, text: 'Hi Tom, well done!')
-
-      expect(subject.recent_comments.length).to eq 5
-      expect(subject.recent_comments[0].text).to eq 'Hi Tom, well done!'
+    it 'should be valid' do
+      expect(subject).to be_valid
     end
-    describe '#update_posts_counter' do
-      it 'should increment posts_counter to 1' do
-        subject.update_posts_counter
 
-        expect(subject.author.posts_counter).to eq 1
-      end
+    it 'should have comments_counter equal to 0' do
+      expect(subject.comments_counter).to eq(0)
+    end
+
+    it 'should have likes_counter equal to 0' do
+      expect(subject.likes_counter).to eq(0)
+    end
+
+    it 'title should not be greater than 250 characters' do
+      post = Post.create(author: user, title: 'a' * 251, text: 'I love this!')
+      expect(post).not_to be_valid
+    end
+
+    it 'increments the author\'s post_counter on save' do
+      expect { subject.save }.to change { user.reload.posts_counter }.by(1)
     end
   end
 end

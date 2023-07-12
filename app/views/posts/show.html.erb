@@ -1,39 +1,10 @@
-<div class='post-detail'>
-     <div class='post'>
-        <div class='post-header-container'>
-           <h3 class='post-header-text'>Post <%= @post.id%> by <%= @author.name%></h3>
-           <span class='comments-likes-info'>Comments:<%= @post.comments_counter%>, Likes:<%= @post.likes_counter%></span>
-        </div>
-         <p><%= @post.text%></p>
-     </div>
-     <div class='comments'>
-         <% @post.comments.each do |comment| %> 
-             <p><%= comment.author.name%>: <%= comment.text %></p>
-         <% end %>
-     </div>
- </div>
-
- <style>
- .post-detail {
-     display: flex;
-     flex-direction: column; 
-     padding: 2%;
-     gap:10px
- }
-
- .post, .comments {
-     border: 1px solid black;
-     padding: 1%
- }
- .post-header-container {
-     display: flex;
-     align-items: center;
-     justify-content: space-between;
- }
- .post-header-text {
-     font-size: 2.5rem;
- }
- .comments-likes-info {
-     font-size: 1.3rem;
- }
- </style > 
+<article class='no-posts'>
+  <div class='post-title' >
+  <h1><%=@post.title%> by <%=@post.author.name%><h1>
+  <div class='post-count-best'>Comments: <%=@post.comments_counter%>, Likes:<%=@post.likes_counter%></div>
+  </div>
+  <div><%=@post.text%></div>
+  <%=button_to "Like", post_likes_path(@post), method: :post, class: ['form-btn, rid-btn']%>
+  <%= render 'linked/comment', comments: @post.best_five_comments%>
+  <%=link_to 'Add comment', new_post_comment_path(@post), class: ['add-comment-btn']%>
+</article>

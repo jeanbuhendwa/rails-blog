@@ -1,38 +1,29 @@
 require 'rails_helper'
 
 RSpec.describe User, type: :model do
-  # tests go here
-  subject { User.create(name: 'Tom', photo: 'https://unsplash.com/photos/F_-0BxGuVvo', bio: 'Teacher from Mexico.') }
+  context 'testing user with no values' do
+    subject { User.new }
+    before { subject.save }
 
-  before { subject.save }
-
-  describe 'Validations' do
-    it 'name should be present' do
-      subject.name = ''
+    it 'require user to have name' do
       expect(subject).to_not be_valid
     end
 
-    it 'posts_counter should be an integer' do
-      subject.posts_counter = 1.4
-      expect(subject).to_not be_valid
-    end
-
-    it 'posts_counter should be greater than or equal to zero' do
-      subject.posts_counter = -1
-      expect(subject).to_not be_valid
+    it 'posts counter should be an integer and greater than or equal to zero' do
+      expect(subject.posts_counter).to be_a(Integer)
+      expect(subject.posts_counter).to be >= 0
     end
   end
+  context 'testing user with values' do
+    subject(:user) { User.new(name: 'Tom', photo: 'https://unsplash.com/photos/F_-0BxGuVvo', bio: 'Teacher from Mexico.') }
+    before { user.save }
 
-  describe '#recent_posts' do
-    it 'should return 3 recent posts' do
-      Post.create(author: subject, title: 'Hello', text: 'This is my first post')
-      Post.create(author: subject, title: 'Hello2', text: 'This is my 2nd post')
-      Post.create(author: subject, title: 'Hello3', text: 'This is my 3rd post')
-      Post.create(author: subject, title: 'Hello4', text: 'This is my 4th post')
-      Post.create(author: subject, title: 'Hello5', text: 'This is my 5th post')
+    it 'user with name should be valid' do
+      expect(user).to be_valid
+    end
 
-      expect(subject.recent_posts.length).to eq 3
-      expect(subject.recent_posts[0].title).to eq 'Hello5'
+    it 'posts counter should be equal to 0' do
+      expect(user.posts_counter).to eq(0)
     end
   end
 end

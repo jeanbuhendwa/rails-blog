@@ -23,3 +23,43 @@ require 'rails_helper'
        expect(page).to have_current_path("/users/#{user2.id}")
      end
    end
+  describe 'User show page' do
+     it "I can see the user's profile picture." do
+       visit user_path(subject.id)
+       page.has_css?('.img-fluid')
+     end
+     it "I can see the user's username." do
+       visit user_path(subject.id)
+       page.has_content?(subject.name)
+     end
+     it 'I can see the number of posts the user has written.' do
+       visit user_path(subject.id)
+       page.has_content?(subject.posts_counter)
+     end
+     it "I can see the user's bio." do
+       visit user_path(subject.id)
+       page.has_content?(subject.bio)
+     end
+     it "I can see the user's first 3 posts." do
+       Post.create(
+         [
+           {
+             author: subject, title: 'Libero assumenda et dolores.', text: 'Est ullam laborum. Placeat neque minima. Mollitia magnam nostrum.'
+           },
+           {
+             author: subject, title: 'Et aut ipsam laudantium.', text: 'Natus cumque quae. Quae id culpa. Aliquid veniam consequatur.'
+           },
+           {
+             author: subject, title: 'Assumenda aut modi et.', text: 'Quas atque officiis. Facilis modi ipsam. Ipsa est enim.'
+           }
+         ]
+       )
+       visit user_path(subject.id)
+       page.has_content?(subject.post)
+     end
+     it "I can see a button that lets me view all of a user's posts." do
+       visit user_path(subject.id)
+       page.has_button?('See all posts')
+     end
+   end
+ end
